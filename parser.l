@@ -1,10 +1,11 @@
 
 alpha 			[A-Za-z_]
-fl			(f|F|l|L)
-ul			(u|U|l|L)*
+fl			(f|F)
 digit 			[0-9]
 space 			[ ]
 hex			[a-fA-F0-9]
+oct			[0-7]
+bin			[0-1]
 exp			[Ee][+-]?{digit}+
 
 %{
@@ -22,21 +23,26 @@ char next;
 "//"					{ singlecomment(); }
 
 "#include<"({alpha})*".h>" {}
+"use std::io;" {}
 
 "#define"({space})""({alpha})""({alpha}|{digit})*""({space})""({digit})+"" 			{ return DEFINE;}
 "#define"({space})""({alpha}({alpha}|{digit})*)""({space})""(({digit}+)\.({digit}+))"" 		{ return DEFINE;}
 "#define"({space})""({alpha}({alpha}|{digit})*)""({space})""({alpha}({alpha}|{digit})*)"" 	{ return DEFINE;}
 
-{digit}+    				{  insertToConstTable(yytext, yylineno, "INT"); return CONSTANT; }
-({digit}+)\.({digit}+) 			{strcpy(datatype, "FLOAT");  insertToConstTable(yytext, yylineno, "FLOAT"); return CONSTANT; }
-0[xX]{hex}+{ul}?			{strcpy(datatype, "LONG");  insertToConstTable(yytext, yylineno, "LONG"); return CONSTANT; }
-{digit}+{ul}?				{strcpy(datatype, "INT");  insertToConstTable(yytext, yylineno, "INT"); return CONSTANT; }
-'(\\.|[^\\'])+'				{strcpy(datatype, "CHAR");  insertToConstTable(yytext, yylineno, "CHAR"); return CONSTANT; }
-{digit}+{exp}{fl}?			{strcpy(datatype, "FLOAT");  insertToConstTable(yytext, yylineno, "FLOAT"); return CONSTANT; }
-{digit}*"."{digit}+({exp})?{fl}?	{strcpy(datatype, "FLOAT");  insertToConstTable(yytext, yylineno, "FLOAT"); return CONSTANT; }
-{digit}+"."{digit}*({exp})?{fl}?	{strcpy(datatype, "FLOAT");  insertToConstTable(yytext, yylineno, "FLOAT"); return CONSTANT; }
+{digit}+    				              { insertToConstTable(yytext, yylineno, "int"); return CONSTANT; }
+({digit}+)\.({digit}+) 			      { strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
 
-{alpha}?\"(\\.|[^\\"])*\"		{  insertToConstTable(yytext, yylineno, "STRING"); return STRING_LITERAL; } 
+0x{hex}+			                    { strcpy(datatype, "int (hex)");  insertToConstTable(yytext, yylineno, "int (hex)"); return CONSTANT; }
+0o{oct}+			                    { strcpy(datatype, "int (octal)");  insertToConstTable(yytext, yylineno, "int (octal)"); return CONSTANT; }
+0b{bin}+			                    { strcpy(datatype, "int (binary)");  insertToConstTable(yytext, yylineno, "int (binary)"); return CONSTANT; }
+
+'(\\.|[^\\'])+'				            { strcpy(datatype, "char");  insertToConstTable(yytext, yylineno, "char"); return CONSTANT; }
+
+{digit}+{exp}{fl}?			          { strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+{digit}*"."{digit}+({exp})?{fl}?	{ strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+{digit}+"."{digit}*({exp})?{fl}?	{ strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+
+{alpha}?\"(\\.|[^\\"])*\"		      { insertToConstTable(yytext, yylineno, "String"); return STRING_LITERAL; } 
 
 "++"			{  return INC_OP; }
 "--"			{  return DEC_OP; }
@@ -56,74 +62,81 @@ char next;
 "^="			{  return XOR_ASSIGN; }
 "|="			{  return OR_ASSIGN; }
 
-"auto"			{ return AUTO; }
-"break"			{ return BREAK; }
-"case"			{ return CASE; }
-"char"			{ return CHAR; }
-"const"			{ return CONST; }
-"continue"		{ return CONTINUE; }
-"default"		{ return DEFAULT; }
-"do"			{ return DO; }
-"double"		{ return DOUBLE; }
-"else"			{ return ELSE; }
-"enum"			{ return ENUM; }
-"extern"		{ return EXTERN; }
-"float"			{ strcpy(datatype, "FLOAT"); tl = yylineno; return FLOAT; }
-"for"			{ return FOR; }
-"goto"			{ return GOTO; }
-"if"			{ return IF; }
-"fn"      { return FN; }
-"let"     { strcpy(datatype, "VARIABLE"); tl = yylineno; return LET; }
-"int"			{ strcpy(datatype, "INT"); tl = yylineno; return INT; }
-"long"			{ return LONG; }
-"register"		{ return REGISTER; }
-"return"		{ return RETURN; }
-"short"			{ return SHORT; }
-"signed"		{ return SIGNED; }
-"static"		{ return STATIC; }
-"struct"		{ return STRUCT; }
-"switch"		{ return SWITCH; }
-"typedef"		{ return TYPEDEF; }
-"union"			{ return UNION; }
-"unsigned"		{ return UNSIGNED; }
-"void"			{ return VOID; }
-"volatile"		{ return VOLATILE; }
-"while"			{ return WHILE; }
+"auto"			  { return AUTO; }
+"break"			  { return BREAK; }
+"case"			  { return CASE; }
+"char"			  { return CHAR; }
+"const"			  { return CONST; }
+"continue"	  { return CONTINUE; }
+"default"		  { return DEFAULT; }
+"do"			    { return DO; }
+"double"		  { return DOUBLE; }
+"else"			  { return ELSE; }
+"enum"			  { return ENUM; }
+"extern"		  { return EXTERN; }
+"float"			  { strcpy(datatype, "float"); tl = yylineno; return FLOAT; }
+"fn"          { return FN; }
+"for"			    { return FOR; }
+"goto"			  { return GOTO; }
+"if"			    { return IF; }
+"int"			    { strcpy(datatype, "int"); tl = yylineno; return INT; }
+"let"         { strcpy(datatype, "Variable"); tl = yylineno; return LET; }
+"long"			  { return LONG; }
+"register"	  { return REGISTER; }
+"return"		  { return RETURN; }
+"short"			  { return SHORT; }
+"signed"		  { return SIGNED; }
+"static"		  { return STATIC; }
+"struct"		  { return STRUCT; }
+"switch"		  { return SWITCH; }
+"typedef"		  { return TYPEDEF; }
+"union"			  { return UNION; }
+"unsigned"	  { return UNSIGNED; }
+"void"			  { return VOID; }
+"volatile"	  { return VOLATILE; }
+"while"			  { return WHILE; }
 
 
-";"			{  strcpy(datatype, "dummy"); return(';'); }
+";"			      {  strcpy(datatype, "dummy"); return(';'); }
 ("{"|"<%")		{  return('{'); }
 ("}"|"%>")		{  return('}'); }
-","			{  return(','); }
-":"			{  return(':'); }
-"="			{  return('='); }
-"("			{  return('('); }
-")"			{  return(')'); }
+","			      {  return(','); }
+":"			      {  return(':'); }
+"="			      {  return('='); }
+"("			      {  return('('); }
+")"			      {  return(')'); }
 ("["|"<:")		{  return('['); }
 ("]"|":>")		{  return(']'); }
-"."			{  return('.'); }
-"&"			{  return('&'); }
-"!"			{  return('!'); }
-"~"			{  return('~'); }
-"-"			{  return('-'); }
-"+"			{  return('+'); }
-"*"			{  return('*'); }
-"/"			{  return('/'); }
-"<"			{  return('<'); }
-">"			{  return('>'); }
-"println!"|"scanf"	{ insertToHash(yytext,"PROCEDURE",yylineno); return IDENTIFIER; }
-"main" 			{ insertToHash(yytext,"PROCEDURE",yylineno); return IDENTIFIER; }
+"."			      {  return('.'); }
+"&"			      {  return('&'); }
+"!"			      {  return('!'); }
+"~"			      {  return('~'); }
+"-"			      {  return('-'); }
+"+"			      {  return('+'); }
+"*"			      {  return('*'); }
+"/"			      {  return('/'); }
+"<"			      {  return('<'); }
+">"			      {  return('>'); }
+
+
+"print!"|"println!"|"io::stdin().read_line"	   { insertToHash(yytext,"Function",yylineno); return IDENTIFIER; }
+"main" 			                                   { insertToHash(yytext,"Function",yylineno); return IDENTIFIER; }
+
+
 {alpha}({alpha}|{digit})*    		{  
-						if(strcmp(datatype, "dummy")==0)
-							return IDENTIFIER;
-						else 
-						{
-							insertToHash(yytext,datatype,yylineno);
-							return IDENTIFIER; 
-						}
-					}
+                                  if(strcmp(datatype, "dummy")==0)
+                                    return IDENTIFIER;
+                                  else 
+                                  {
+                                    insertToHash(yytext,datatype,yylineno);
+                                    return IDENTIFIER; 
+                                  }
+                                }
+
 [ \t\v\n\f]		{  }
 .			{ /* ignore bad characters */ }
+
+
 %%
 
 struct cnode
