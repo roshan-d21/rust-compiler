@@ -28,6 +28,13 @@ docker container run --name cdproject -v "$(pwd)":/root/rust-compiler -it compil
 
 ## Usage
 
+Using `make`:
+
+```bash
+make parse
+```
+Or compile each file individually:
+
 ```bash
 $ flex parser.l
 $ yacc parser.y
