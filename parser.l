@@ -62,38 +62,27 @@ char next;
 "^="			{  return XOR_ASSIGN; }
 "|="			{  return OR_ASSIGN; }
 
-"auto"			  { return AUTO; }
 "break"			  { return BREAK; }
-"case"			  { return CASE; }
 "char"			  { return CHAR; }
 "const"			  { return CONST; }
 "continue"	  { return CONTINUE; }
-"default"		  { return DEFAULT; }
 "do"			    { return DO; }
 "double"		  { return DOUBLE; }
 "else"			  { return ELSE; }
-"enum"			  { return ENUM; }
-"extern"		  { return EXTERN; }
 "float"			  { strcpy(datatype, "float"); tl = yylineno; return FLOAT; }
 "fn"          { return FN; }
 "for"			    { return FOR; }
-"goto"			  { return GOTO; }
 "if"			    { return IF; }
 "int"			    { strcpy(datatype, "int"); tl = yylineno; return INT; }
 "let"         { strcpy(datatype, "Variable"); tl = yylineno; return LET; }
 "long"			  { return LONG; }
-"register"	  { return REGISTER; }
 "return"		  { return RETURN; }
 "short"			  { return SHORT; }
 "signed"		  { return SIGNED; }
-"static"		  { return STATIC; }
 "struct"		  { return STRUCT; }
-"switch"		  { return SWITCH; }
-"typedef"		  { return TYPEDEF; }
 "union"			  { return UNION; }
 "unsigned"	  { return UNSIGNED; }
 "void"			  { return VOID; }
-"volatile"	  { return VOLATILE; }
 "while"			  { return WHILE; }
 
 

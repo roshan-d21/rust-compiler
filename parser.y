@@ -3,7 +3,7 @@
 	char data_type[200];
 %}
 
-%expect 33
+%expect 28
 
 %nonassoc NO_ELSE
 %nonassoc  ELSE 
@@ -15,10 +15,9 @@
 %token AND_OP OR_OP ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN DEFINE
-%token TYPEDEF EXTERN STATIC AUTO REGISTER
-%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID FN LET
-%token STRUCT UNION ENUM 
-%token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
+%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOID FN LET
+%token STRUCT UNION
+%token IF ELSE WHILE DO FOR CONTINUE BREAK RETURN
 %start begin
 
 %union{
@@ -169,9 +168,7 @@ declaration
 	;
 
 declaration_specifiers
-	: storage_class_specifier
-	| storage_class_specifier declaration_specifiers
-	| type_specifier	{ strcpy(data_type, $<str>1); }
+	: type_specifier	{ strcpy(data_type, $<str>1); }
 	| type_specifier declaration_specifiers
 	;
 
@@ -183,14 +180,6 @@ init_declarator_list
 init_declarator
 	: declarator
 	| declarator '=' initializer
-	;
-
-storage_class_specifier
-	: TYPEDEF
-	| EXTERN
-	| STATIC
-	| AUTO
-	| REGISTER
 	;
 
 type_specifier
