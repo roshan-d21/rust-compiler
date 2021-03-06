@@ -38,7 +38,6 @@ char next;
 
 {alpha}?\"(\\.|[^\\"])*\"		{  insertToConstTable(yytext, yylineno, "STRING"); return STRING_LITERAL; } 
 
-"->"			{  return PTR_OP; }
 "++"			{  return INC_OP; }
 "--"			{  return DEC_OP; }
 "<<"			{  return LEFT_OP; }
@@ -49,9 +48,6 @@ char next;
 "!="			{  return NE_OP; }
 "&&"			{  return AND_OP; }
 "||"			{  return OR_OP; }
-"*="			{  return MUL_ASSIGN; }
-"/="			{  return DIV_ASSIGN; }
-"%="			{  return MOD_ASSIGN; }
 "+="			{  return ADD_ASSIGN; }
 "-="			{  return SUB_ASSIGN; }
 "<<="			{  return LEFT_ASSIGN; }
@@ -84,7 +80,6 @@ char next;
 "return"		{ return RETURN; }
 "short"			{ return SHORT; }
 "signed"		{ return SIGNED; }
-"sizeof" 		{ return SIZEOF; }
 "static"		{ return STATIC; }
 "struct"		{ return STRUCT; }
 "switch"		{ return SWITCH; }
@@ -114,12 +109,8 @@ char next;
 "+"			{  return('+'); }
 "*"			{  return('*'); }
 "/"			{  return('/'); }
-"%"			{  return('%'); }
 "<"			{  return('<'); }
 ">"			{  return('>'); }
-"^"			{  return('^'); }
-"|"			{  return('|'); }
-"?"			{  return('?'); }
 "println!"|"scanf"	{ insertToHash(yytext,"PROCEDURE",yylineno); return IDENTIFIER; }
 "main" 			{ insertToHash(yytext,"PROCEDURE",yylineno); return IDENTIFIER; }
 {alpha}({alpha}|{digit})*    		{  
@@ -138,7 +129,6 @@ char next;
 struct cnode
 {
 	char num[50];
-	//int lno;
 	char type[20];
 };
 struct cnode ctable[100];
@@ -148,14 +138,13 @@ void insertToConstTable(char *num, int l, char *type)
 {
 	strcpy(ctable[ccount].num, num);
 	strcpy(ctable[ccount].type, type);
-	//ctable[ccount].lno = l;
 	ccount++;
 }
 
 void disp()
 {
 	int i;
-	printf("\n\n------------------------------CONSTANT TABLE------------------------------\n");
+	printf("\n\n------------------------------Constant Table------------------------------\n");
 	printf("--------------------------------------------------------------------------\n");
 	printf("Value \t\t|\tData Type\t\t\n");
 	printf("--------------------------------------------------------------------------\n");
@@ -171,9 +160,8 @@ void disp()
 struct node
 {
 	char token[100];
-    	char attr[100];
-    	//int line[100];
-    	int line_count;
+    char attr[100];
+    int line_count;
 	struct node *next;
 };
 
@@ -192,7 +180,6 @@ struct node * createNode(char *token, char *attr, int l)
 	newnode = (struct node *) malloc(sizeof(struct node));
 	strcpy(newnode->token, token);
 	strcpy(newnode->attr, attr);
-	//newnode->line[0] = l;
 	newnode->line_count = 1; 
 	newnode->next = NULL;
 	return newnode;
