@@ -1,12 +1,11 @@
 
 alpha 			[A-Za-z_]
-fl			(f|F)
+fl			    (f|F)
 digit 			[0-9]
-space 			[ ]
-hex			[a-fA-F0-9]
-oct			[0-7]
-bin			[0-1]
-exp			[Ee][+-]?{digit}+
+hex			    [a-fA-F0-9]
+oct			    [0-7]
+bin			    [0-1]
+exp			    [Ee][+-]?{digit}+
 
 %{
 //int yylineno = 1;
@@ -18,49 +17,44 @@ char next;
 %}
 
 %%	
-\n   { yylineno++; }
+\n            { yylineno++; }
 "/*"					{ multicomment(); }
 "//"					{ singlecomment(); }
 
-"#include<"({alpha})*".h>" {}
 "use std::io;" {}
 
-"#define"({space})""({alpha})""({alpha}|{digit})*""({space})""({digit})+"" 			{ return DEFINE;}
-"#define"({space})""({alpha}({alpha}|{digit})*)""({space})""(({digit}+)\.({digit}+))"" 		{ return DEFINE;}
-"#define"({space})""({alpha}({alpha}|{digit})*)""({space})""({alpha}({alpha}|{digit})*)"" 	{ return DEFINE;}
+{digit}+    				              { insertToConstTable(yytext, yylineno, "int"); return CONSTANT; }
+({digit}+)\.({digit}+) 			      { insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
 
-{digit}+    				              { /*strcpy(datatype, "int");*/ insertToConstTable(yytext, yylineno, "int"); return CONSTANT; }
-({digit}+)\.({digit}+) 			      { /*strcpy(datatype, "float");*/  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+0x{hex}+			                    { insertToConstTable(yytext, yylineno, "int (hex)"); return CONSTANT; }
+0o{oct}+			                    { insertToConstTable(yytext, yylineno, "int (octal)"); return CONSTANT; }
+0b{bin}+			                    { insertToConstTable(yytext, yylineno, "int (binary)"); return CONSTANT; }
 
-0x{hex}+			                    { strcpy(datatype, "int (hex)");  insertToConstTable(yytext, yylineno, "int (hex)"); return CONSTANT; }
-0o{oct}+			                    { strcpy(datatype, "int (octal)");  insertToConstTable(yytext, yylineno, "int (octal)"); return CONSTANT; }
-0b{bin}+			                    { strcpy(datatype, "int (binary)");  insertToConstTable(yytext, yylineno, "int (binary)"); return CONSTANT; }
+'(\\.|[^\\'])+'				            { insertToConstTable(yytext, yylineno, "char"); return CONSTANT; }
 
-'(\\.|[^\\'])+'				            { strcpy(datatype, "char");  insertToConstTable(yytext, yylineno, "char"); return CONSTANT; }
+{digit}+{exp}{fl}?			          { insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+{digit}*"."{digit}+({exp})?{fl}?	{ insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
 
-{digit}+{exp}{fl}?			          { strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
-{digit}*"."{digit}+({exp})?{fl}?	{ strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+{alpha}?\"(\\.|[^\\"])*\"		      { insertToConstTable(yytext, yylineno, "String"); return STRING_LITERAL; } 
 
-{alpha}?\"(\\.|[^\\"])*\"		      { strcpy(datatype, "String"); insertToConstTable(yytext, yylineno, "String"); return STRING_LITERAL; } 
-
-"++"			{  return INC_OP; }
-"--"			{  return DEC_OP; }
-"<<"			{  return LEFT_OP; }
-">>"			{  return RIGHT_OP; }
-"<="			{  return LE_OP; }
-">="			{  return GE_OP; }
-"=="			{  return EQ_OP; }
-"!="			{  return NE_OP; }
-"&&"			{  return AND_OP; }
-"||"			{  return OR_OP; }
-"+="			{  return ADD_ASSIGN; }
-"-="			{  return SUB_ASSIGN; }
-"<<="			{  return LEFT_ASSIGN; }
-">>="			{  return RIGHT_ASSIGN; }
-"&="			{  return AND_ASSIGN; }
-"^="			{  return XOR_ASSIGN; }
-"|="			{  return OR_ASSIGN; }
-".."      {  return RANGE; }
+"++"			    { return INC_OP; }
+"--"			    { return DEC_OP; }
+"<<"			    { return LEFT_OP; }
+">>"			    { return RIGHT_OP; }
+"<="			    { return LE_OP; }
+">="			    { return GE_OP; }
+"=="			    { return EQ_OP; }
+"!="			    { return NE_OP; }
+"&&"			    { return AND_OP; }
+"||"			    { return OR_OP; }
+"+="			    { return ADD_ASSIGN; }
+"-="			    { return SUB_ASSIGN; }
+"<<="			    { return LEFT_ASSIGN; }
+">>="			    { return RIGHT_ASSIGN; }
+"&="			    { return AND_ASSIGN; }
+"^="			    { return XOR_ASSIGN; }
+"|="			    { return OR_ASSIGN; }
+".."|"..="    { return RANGE; }
 
 "break"			  { return BREAK; }
 "char"			  { return CHAR; }
@@ -74,6 +68,7 @@ char next;
 "if"			    { return IF; }
 "in"          { return IN; }
 "int"			    { strcpy(datatype, "int"); tl = yylineno; return INT; }
+".iter()"     { return ITER; }
 "let"         { strcpy(datatype, "Variable"); tl = yylineno; return LET; }
 "loop"        { return LOOP; }
 "long"			  { return LONG; }
