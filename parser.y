@@ -5,9 +5,9 @@
 
 %expect 12
 
-%nonassoc NO_ELSE
+%nonassoc  NO_ELSE
 %nonassoc  ELSE 
-%left '<' '>' '=' GE_OP LE_OP EQ_OP NE_OP 
+%left  '<' '>' '=' GE_OP LE_OP EQ_OP NE_OP 
 %left  '+'  '-'
 %left  '*'  '/' '%'
 %token IDENTIFIER CONSTANT STRING_LITERAL
@@ -15,7 +15,7 @@
 %token AND_OP OR_OP ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN
-%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID CONST STATIC FN LET
+%token FN LET CONST STATIC
 %token IF ELSE LOOP WHILE FOR IN RANGE ITER CONTINUE BREAK RETURN
 %start begin
 
@@ -182,20 +182,11 @@ init_declarator
 	;
 
 type_specifier
-	: VOID
-  | FN
+	: FN
   | LET
   | CONST
   | STATIC
-	| CHAR
-	| SHORT
-	| INT
-	| LONG
-	| FLOAT
-	| DOUBLE
-	| SIGNED
-	| UNSIGNED
-	;
+  ;
 
 declarator
 	: pointer direct_declarator

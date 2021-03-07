@@ -56,29 +56,22 @@ char next;
 "|="			    { return OR_ASSIGN; }
 ".."|"..="    { return RANGE; }
 
-"break"			  { return BREAK; }
-"char"			  { return CHAR; }
-"const"			  { strcpy(datatype, "Variable (Const)"); tl = yylineno; return CONST; }
-"continue"	  { return CONTINUE; }
-"double"		  { return DOUBLE; }
-"else"			  { return ELSE; }
-"float"			  { strcpy(datatype, "float"); tl = yylineno; return FLOAT; }
-"fn"          { return FN; }
-"for"			    { strcpy(datatype, "Variable"); tl = yylineno; return FOR; }
-"if"			    { return IF; }
-"in"          { return IN; }
-"int"			    { strcpy(datatype, "int"); tl = yylineno; return INT; }
-".iter()"     { return ITER; }
 "let"         { strcpy(datatype, "Variable"); tl = yylineno; return LET; }
-"loop"        { return LOOP; }
-"long"			  { return LONG; }
-"return"		  { return RETURN; }
-"short"			  { return SHORT; }
+"const"			  { strcpy(datatype, "Variable (Const)"); tl = yylineno; return CONST; }
 "static"      { strcpy(datatype, "Variable (Static)"); tl = yylineno; return STATIC; }
-"signed"		  { return SIGNED; }
-"unsigned"	  { return UNSIGNED; }
-"void"			  { return VOID; }
+
+"fn"          { return FN; }
+"return"		  { return RETURN; }
+
+"if"			    { return IF; }
+"else"			  { return ELSE; }
+"loop"        { return LOOP; }
 "while"			  { return WHILE; }
+"for"			    { strcpy(datatype, "Variable"); tl = yylineno; return FOR; }
+"in"          { return IN; }
+".iter()"     { return ITER; }
+"break"			  { return BREAK; }
+"continue"	  { return CONTINUE; }
 
 
 ";"			      {  strcpy(datatype, "dummy"); return(';'); }
