@@ -64,7 +64,7 @@ char next;
 
 "break"			  { return BREAK; }
 "char"			  { return CHAR; }
-"const"			  { return CONST; }
+"const"			  { strcpy(datatype, "Variable (Const)"); tl = yylineno; return CONST; }
 "continue"	  { return CONTINUE; }
 "do"			    { return DO; }
 "double"		  { return DOUBLE; }
@@ -78,9 +78,8 @@ char next;
 "long"			  { return LONG; }
 "return"		  { return RETURN; }
 "short"			  { return SHORT; }
+"static"      { strcpy(datatype, "Variable (Static)"); tl = yylineno; return STATIC; }
 "signed"		  { return SIGNED; }
-"struct"		  { return STRUCT; }
-"union"			  { return UNION; }
 "unsigned"	  { return UNSIGNED; }
 "void"			  { return VOID; }
 "while"			  { return WHILE; }

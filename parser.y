@@ -15,8 +15,7 @@
 %token AND_OP OR_OP ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN DEFINE
-%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOID FN LET
-%token STRUCT UNION
+%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID CONST STATIC FN LET
 %token IF ELSE WHILE DO FOR CONTINUE BREAK RETURN
 %start begin
 
@@ -186,6 +185,8 @@ type_specifier
 	: VOID
   | FN
   | LET
+  | CONST
+  | STATIC
 	| CHAR
 	| SHORT
 	| INT
@@ -194,40 +195,6 @@ type_specifier
 	| DOUBLE
 	| SIGNED
 	| UNSIGNED
-	| struct_or_union_specifier
-	;
-
-specifier_qualifier_list
-	: type_specifier specifier_qualifier_list
-	| type_specifier
-	| CONST specifier_qualifier_list
-	| CONST
-	;
-
-struct_or_union_specifier
-	: struct_or_union IDENTIFIER '{' struct_declaration_list '}' ';'
-	| struct_or_union '{' struct_declaration_list '}' ';'
-	| struct_or_union IDENTIFIER ';'
-	;
-
-struct_or_union
-	: STRUCT
-	| UNION
-	;
-
-struct_declaration_list
-	: struct_declaration
-	| struct_declaration_list struct_declaration
-	;
-
-struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'
-	;
-
-
-struct_declarator_list
-	: declarator
-	| struct_declarator_list ',' declarator
 	;
 
 declarator
