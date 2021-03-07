@@ -3,7 +3,7 @@
 	char data_type[200];
 %}
 
-%expect 28
+%expect 12
 
 %nonassoc NO_ELSE
 %nonassoc  ELSE 
@@ -14,9 +14,9 @@
 %token INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
-%token XOR_ASSIGN OR_ASSIGN DEFINE
+%token XOR_ASSIGN OR_ASSIGN
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID CONST STATIC FN LET
-%token IF ELSE LOOP WHILE FOR IN RANGE CONTINUE BREAK RETURN
+%token IF ELSE LOOP WHILE FOR IN RANGE ITER CONTINUE BREAK RETURN
 %start begin
 
 %union{
@@ -28,7 +28,7 @@
 begin
 	: external_declaration
 	| begin external_declaration
-	| Define begin
+	/* | Define begin */
 	;
 
 primary_expression
@@ -38,9 +38,9 @@ primary_expression
 	| '(' expression ')'
 	;
 
-Define
+/* Define
 	: DEFINE
-	;
+	; */
 
 postfix_expression
 	: primary_expression
@@ -283,6 +283,8 @@ iteration_statement
 	: LOOP statement
   | WHILE expression statement
   | FOR primary_expression IN primary_expression statement
+  | FOR primary_expression IN primary_expression ITER statement
+	| FOR primary_expression IN primary_expression RANGE primary_expression statement
 	| FOR primary_expression IN '(' primary_expression RANGE primary_expression ')' statement
 	;
 
