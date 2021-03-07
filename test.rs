@@ -7,11 +7,11 @@ fn main() {
 
   io::stdin().read_line(&a);
 
-  while a < 10 {
-    if a == 0 {
-      let b = "local variable";
-    }
+  loop {
     a += 1;
-    println!(b);
+  }
+
+  for i in (3..a) {
+    println!(i);
   }
 }

@@ -16,7 +16,7 @@
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN DEFINE
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID CONST STATIC FN LET
-%token IF ELSE WHILE DO FOR CONTINUE BREAK RETURN
+%token IF ELSE LOOP WHILE FOR IN RANGE CONTINUE BREAK RETURN
 %start begin
 
 %union{
@@ -280,15 +280,16 @@ selection_statement
 	;
 
 iteration_statement
-	: WHILE expression statement
-	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	: LOOP statement
+  | WHILE expression statement
+  | FOR primary_expression IN primary_expression statement
+	| FOR primary_expression IN '(' primary_expression RANGE primary_expression ')' statement
 	;
 
 jump_statement
 	: CONTINUE ';'
 	| BREAK ';'
+  | BREAK expression ';'
 	| RETURN ';'
 	| RETURN expression ';'
 	;

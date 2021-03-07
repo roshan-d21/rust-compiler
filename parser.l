@@ -29,8 +29,8 @@ char next;
 "#define"({space})""({alpha}({alpha}|{digit})*)""({space})""(({digit}+)\.({digit}+))"" 		{ return DEFINE;}
 "#define"({space})""({alpha}({alpha}|{digit})*)""({space})""({alpha}({alpha}|{digit})*)"" 	{ return DEFINE;}
 
-{digit}+    				              { insertToConstTable(yytext, yylineno, "int"); return CONSTANT; }
-({digit}+)\.({digit}+) 			      { strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
+{digit}+    				              { /*strcpy(datatype, "int");*/ insertToConstTable(yytext, yylineno, "int"); return CONSTANT; }
+({digit}+)\.({digit}+) 			      { /*strcpy(datatype, "float");*/  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
 
 0x{hex}+			                    { strcpy(datatype, "int (hex)");  insertToConstTable(yytext, yylineno, "int (hex)"); return CONSTANT; }
 0o{oct}+			                    { strcpy(datatype, "int (octal)");  insertToConstTable(yytext, yylineno, "int (octal)"); return CONSTANT; }
@@ -40,9 +40,8 @@ char next;
 
 {digit}+{exp}{fl}?			          { strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
 {digit}*"."{digit}+({exp})?{fl}?	{ strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
-{digit}+"."{digit}*({exp})?{fl}?	{ strcpy(datatype, "float");  insertToConstTable(yytext, yylineno, "float"); return CONSTANT; }
 
-{alpha}?\"(\\.|[^\\"])*\"		      { insertToConstTable(yytext, yylineno, "String"); return STRING_LITERAL; } 
+{alpha}?\"(\\.|[^\\"])*\"		      { strcpy(datatype, "String"); insertToConstTable(yytext, yylineno, "String"); return STRING_LITERAL; } 
 
 "++"			{  return INC_OP; }
 "--"			{  return DEC_OP; }
@@ -61,20 +60,22 @@ char next;
 "&="			{  return AND_ASSIGN; }
 "^="			{  return XOR_ASSIGN; }
 "|="			{  return OR_ASSIGN; }
+".."      {  return RANGE; }
 
 "break"			  { return BREAK; }
 "char"			  { return CHAR; }
 "const"			  { strcpy(datatype, "Variable (Const)"); tl = yylineno; return CONST; }
 "continue"	  { return CONTINUE; }
-"do"			    { return DO; }
 "double"		  { return DOUBLE; }
 "else"			  { return ELSE; }
 "float"			  { strcpy(datatype, "float"); tl = yylineno; return FLOAT; }
 "fn"          { return FN; }
-"for"			    { return FOR; }
+"for"			    { strcpy(datatype, "Variable"); tl = yylineno; return FOR; }
 "if"			    { return IF; }
+"in"          { return IN; }
 "int"			    { strcpy(datatype, "int"); tl = yylineno; return INT; }
 "let"         { strcpy(datatype, "Variable"); tl = yylineno; return LET; }
+"loop"        { return LOOP; }
 "long"			  { return LONG; }
 "return"		  { return RETURN; }
 "short"			  { return SHORT; }
