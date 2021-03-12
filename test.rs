@@ -11,7 +11,7 @@ fn main() {
     a += 1;
   }
 
-  for i in (3..a) {
+  for i in (3...a) {
     println!(i);
   }
 }

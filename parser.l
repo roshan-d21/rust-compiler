@@ -49,11 +49,6 @@ char next;
 "||"			    { return OR_OP; }
 "+="			    { return ADD_ASSIGN; }
 "-="			    { return SUB_ASSIGN; }
-"<<="			    { return LEFT_ASSIGN; }
-">>="			    { return RIGHT_ASSIGN; }
-"&="			    { return AND_ASSIGN; }
-"^="			    { return XOR_ASSIGN; }
-"|="			    { return OR_ASSIGN; }
 ".."|"..="    { return RANGE; }
 
 "let"         { strcpy(datatype, "Variable"); tl = yylineno; return LET; }
@@ -82,12 +77,8 @@ char next;
 "="			      {  return('='); }
 "("			      {  return('('); }
 ")"			      {  return(')'); }
-("["|"<:")		{  return('['); }
-("]"|":>")		{  return(']'); }
-"."			      {  return('.'); }
 "&"			      {  return('&'); }
 "!"			      {  return('!'); }
-"~"			      {  return('~'); }
 "-"			      {  return('-'); }
 "+"			      {  return('+'); }
 "*"			      {  return('*'); }

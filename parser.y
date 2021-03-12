@@ -3,18 +3,15 @@
 	char data_type[200];
 %}
 
-%expect 12
+%expect 8
 
 %nonassoc  NO_ELSE
 %nonassoc  ELSE 
-%left  '<' '>' '=' GE_OP LE_OP EQ_OP NE_OP 
-%left  '+'  '-'
-%left  '*'  '/' '%'
+%left  '+' '-' '*' '/' 
+%left '<' '>' '=' GE_OP LE_OP EQ_OP NE_OP 
 %token IDENTIFIER CONSTANT STRING_LITERAL
 %token INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
-%token AND_OP OR_OP ADD_ASSIGN
-%token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
-%token XOR_ASSIGN OR_ASSIGN
+%token AND_OP OR_OP ADD_ASSIGN SUB_ASSIGN
 %token FN LET CONST STATIC
 %token IF ELSE LOOP WHILE FOR IN RANGE ITER CONTINUE BREAK RETURN
 %start begin
@@ -27,8 +24,6 @@
 
 begin
 	: external_declaration
-	| begin external_declaration
-	/* | Define begin */
 	;
 
 primary_expression
@@ -38,23 +33,17 @@ primary_expression
 	| '(' expression ')'
 	;
 
-/* Define
-	: DEFINE
-	; */
-
 postfix_expression
 	: primary_expression
 	| postfix_expression '[' expression ']'
 	| postfix_expression '(' ')'
 	| postfix_expression '(' argument_expression_list ')'
-	| postfix_expression '.' IDENTIFIER
 	| postfix_expression INC_OP
 	| postfix_expression DEC_OP
 	;
 
 argument_expression_list
 	: assignment_expression
-	| argument_expression_list ',' assignment_expression
 	;
 
 unary_expression
@@ -69,7 +58,6 @@ unary_operator
 	| '*'
 	| '+'
 	| '-'
-	| '~'
 	| '!'
 	;
 
@@ -77,7 +65,6 @@ multiplicative_expression
 	: unary_expression
 	| multiplicative_expression '*' unary_expression
 	| multiplicative_expression '/' unary_expression
-	| multiplicative_expression '%' unary_expression
 	;
 
 additive_expression
@@ -86,18 +73,12 @@ additive_expression
 	| additive_expression '-' multiplicative_expression
 	;
 
-shift_expression
-	: additive_expression
-	| shift_expression LEFT_OP additive_expression
-	| shift_expression RIGHT_OP additive_expression
-	;
-
 relational_expression
-	: shift_expression
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	: additive_expression
+	| relational_expression '<' additive_expression
+	| relational_expression '>' additive_expression
+	| relational_expression LE_OP additive_expression
+	| relational_expression GE_OP additive_expression
 	;
 
 equality_expression
@@ -145,11 +126,6 @@ assignment_operator
 	: '='
 	| ADD_ASSIGN
 	| SUB_ASSIGN
-	| LEFT_ASSIGN
-	| RIGHT_ASSIGN
-	| AND_ASSIGN
-	| XOR_ASSIGN
-	| OR_ASSIGN
 	;
 
 expression
@@ -189,33 +165,15 @@ type_specifier
   ;
 
 declarator
-	: pointer direct_declarator
-	| direct_declarator
+	: direct_declarator
 	;
 
 direct_declarator
 	: IDENTIFIER
 	| '(' declarator ')'
 	| direct_declarator '[' constant_expression ']'
-	| direct_declarator '[' ']'
-	| direct_declarator '(' parameter_list ')'
 	| direct_declarator '(' identifier_list ')'
 	| direct_declarator '(' ')'
-	;
-
-pointer
-	: '*'
-	| '*' pointer
-	;
-
-parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
-	;
-
-parameter_declaration
-	: declaration_specifiers declarator
-	| declaration_specifiers
 	;
 
 identifier_list
