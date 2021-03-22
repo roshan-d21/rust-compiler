@@ -20,10 +20,10 @@ sudo apt-get install -y flex byacc bison
 Or use the `Dockerfile` instead:
 
 ```bash
-docker image build -t compiler:latest .
+docker image build -t lex-yacc:latest .
 ```
 ```bash
-docker container run --name cdproject -v "$(pwd)":/root/rust-compiler -it compiler:latest
+docker container run --name cdproject -it lex-yacc:latest
 ````
 
 ## Usage
