@@ -86,18 +86,6 @@ void while3()
 	printf("L%d:\n",y);
 }
 
-void dowhile1()
-{
-	label_num++;
-	label[++ltop] = label_num;
-	printf("\nL%d:\n", label_num);
-}
-
-void dowhile2()
-{
- 	printf("\nif %s goto L%d\n", st1[top--], label[ltop--]);
-}
-
 void for1()
 {
 	label_num++;
@@ -183,9 +171,13 @@ void codegen_assign()
 
 %}
 
+%union {
+    int ival;
+    char *str;
+}
 %token<ival> INT FLOAT VOID
 %token<str> ID NUM REAL
-%token WHILE IF RETURN PREPROC LE STRING PRINT FUNCTION DO ARRAY ELSE STRUCT STRUCT_VAR FOR GE EQ NE INC DEC AND OR
+%token IMPORT FUNCTION RETURN STRING ARRAY PRINT IF ELSE WHILE FOR LE GE EQ AND OR
 %left LE GE EQ NEQ AND OR '<' '>'
 %right '='
 %right UMINUS
@@ -193,14 +185,11 @@ void codegen_assign()
 %left '*' '/'
 %type<str> assignment assignment1 consttype '=' '+' '-' '*' '/' E T F
 %type<ival> Type
-%union {
-		int ival;
-		char *str;
-	}
+
 %%
 
 start : Function start
-	| PREPROC start
+	| IMPORT start
 	| Declaration start
 	|
 	;
@@ -223,11 +212,11 @@ Function : Type ID '('')'  CompoundStmt {
             } else {
                 insert($2, FUNCTION);
                 insert($2, $1);
-                g_addr+=4;
+                g_addr += 4;
             }
         }
     | Type ID '(' parameter_list ')' CompoundStmt  {
-            if ($1!=returntype_func(ct)) {
+            if ($1 != returntype_func(ct)) {
                 printf("\nError : Type mismatch : Line %d\n", printline()); 
                 errc++;
             }
@@ -279,7 +268,6 @@ stmt : Declaration
 	| if
 	| ID '(' ')' ';'
 	| while
-	| dowhile
 	| for
 	| RETURN consttype ';' {
             if (!(strspn($2, "0123456789") == strlen($2)))
@@ -298,9 +286,6 @@ stmt : Declaration
 	| ';'
 	| PRINT '(' STRING ')' ';'
 	| CompoundStmt
-	;
-
-dowhile : DO { dowhile1(); } CompoundStmt WHILE '(' E ')' { dowhile2(); } ';'
 	;
 
 for	: FOR '(' E { for1(); } ';' E { for2(); }';' E { for3(); } ')' CompoundStmt { for4(); }
@@ -497,14 +482,6 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
 			}
 		}
 	| ID '[' assignment1 ']' ';'
-	| STRUCT ID '{' Declaration '}' ';' {
-            insert($2, STRUCT);
-            g_addr += 4;
-		}
-	| STRUCT ID ID ';' {
-            insert($3, STRUCT_VAR);
-            g_addr += 4;
-		}
 	| error
 	;
 
