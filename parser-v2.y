@@ -23,6 +23,21 @@ void yyerror(char *s);
 int printline();
 extern int yylineno;
 
+void print_error()
+{
+    printf("\033[1;31mError: \033[0m");
+}
+
+void print_label()
+{
+    printf("\033[0;36m");
+}
+
+void print_reset()
+{
+    printf("\033[0m");
+}
+
 void scope_start()
 {
 	stack[index1] = i;
@@ -44,7 +59,10 @@ void if1()
 	strcpy(temp,"t");
 	strcat(temp, temp_count);
 	printf("\n%s = not %s\n", temp, st1[top]);
- 	printf("if %s goto L%d\n", temp, label_num);
+ 	printf("if %s ", temp);
+    print_label();
+    printf("goto L%d\n", label_num);
+    print_reset();
 	temp_count[0]++;
 	label[++ltop]=label_num;
 }
@@ -52,33 +70,43 @@ void if1()
 void if2()
 {
 	label_num++;
+    print_label();
 	printf("\ngoto L%d\n", label_num);
 	printf("L%d: \n", label[ltop--]);
+    print_reset();
 	label[++ltop] = label_num;
 }
 
 void if3()
 {
+    print_label();
 	printf("\nL%d:\n", label[ltop--]);
+    print_reset();
 }
 
 void loop1()
 {
     label_num++;
     label[++ltop] = label_num;
+    print_label();
 	printf("\nL%d:\n", label_num);
+    print_reset();
 }
 
 void loop2()
 {
+    print_label();
 	printf("\ngoto L%d\n", label[ltop--]);
+    print_reset();
 }
 
 void while1()
 {
 	label_num++;
 	label[++ltop] = label_num;
+    print_label();
 	printf("\nL%d:\n", label_num);
+    print_reset();
 }
 
 void while2()
@@ -87,7 +115,10 @@ void while2()
 	strcpy(temp, "t");
 	strcat(temp, temp_count);
 	printf("%s = not %s\n", temp, st1[top--]);
- 	printf("\nif %s goto L%d\n", temp, label_num);
+ 	printf("\nif %s ", temp);
+    print_label();
+    printf("goto L%d\n", label_num);
+    print_reset();
 	temp_count[0]++;
 	label[++ltop] = label_num;
 }
@@ -95,8 +126,10 @@ void while2()
 void while3()
 {
 	int y = label[ltop--];
+    print_label();
 	printf("\ngoto L%d\n", label[ltop--]);
 	printf("\nL%d:\n",y);
+    print_reset();
 }
 
 // void for1()
@@ -143,7 +176,9 @@ void forin()
 
     label_num++;
 	label[++ltop] = label_num;
+    print_label();
 	printf("\nL%d:\n", label_num);
+    print_reset();
 
     printf("\nt%s = %s < %s\n", temp_count, st1[top - 2], st1[top]);
 	temp_count[0]++;
@@ -153,7 +188,10 @@ void forin()
 	strcpy(temp, "t");
 	strcat(temp, temp_count);
 	printf("%s = not %s\n", temp, st1[top]);
- 	printf("\nif %s goto L%d\n\n", temp, label_num);
+ 	printf("\nif %s ", temp);
+    print_label();
+ 	printf("goto L%d\n\n", label_num);
+    print_reset();
 	temp_count[0]++;
 	label[++ltop] = label_num;
 }
@@ -162,8 +200,10 @@ void forinend()
 {
     printf("\n%s = %s + 1\n", forvar[fortop], forvar[fortop--]);
     int y = label[ltop--];
+    print_label();
 	printf("\ngoto L%d\n", label[ltop--]);
 	printf("\nL%d:\n",y);
+    print_reset();
 }
 
 void push(char *a)
@@ -241,9 +281,10 @@ Function : Type ID '('')'  CompoundStmt {
             if (strcmp($2, "main") != 0)
                 printf("goto F%d\n", lnum1);
 
-            if ($1 != returntype_func(ct))
-                printf("\nError : Type mismatch : Line %d\n", printline());
-
+            if ($1 != returntype_func(ct)) {
+                print_error();
+                printf("Type mismatch : Line %d\n", printline());
+            }
             if (!(strcmp($2, "printf") && strcmp($2, "scanf") 
                 && strcmp($2, "getc") && strcmp($2, "gets") && strcmp($2, "getchar") 
                 && strcmp($2, "puts") && strcmp($2, "putchar") && strcmp($2, "clearerr") 
@@ -251,7 +292,8 @@ Function : Type ID '('')'  CompoundStmt {
                 && strcmp($2, "rewind") && strcmp($2, "sprint") && strcmp($2, "sscanf") 
                 && strcmp($2, "remove") && strcmp($2, "fflush"))) 
             {
-                printf("Error : Type mismatch in redeclaration of %s : Line %d\n", $2, printline());
+                print_error();
+                printf("Type mismatch in redeclaration of %s : Line %d\n", $2, printline());
             } else {
                 insert($2, FUNCTION);
                 insert($2, $1);
@@ -260,7 +302,8 @@ Function : Type ID '('')'  CompoundStmt {
         }
     | Type ID '(' parameter_list ')' CompoundStmt  {
             if ($1 != returntype_func(ct)) {
-                printf("\nError : Type mismatch : Line %d\n", printline()); 
+                print_error();
+                printf(" Type mismatch : Line %d\n", printline()); 
                 errc++;
             }
 
@@ -271,7 +314,8 @@ Function : Type ID '('')'  CompoundStmt {
                 && strcmp($2,"rewind") && strcmp($2,"sprint") && strcmp($2,"sscanf") 
                 && strcmp($2,"remove") && strcmp($2,"fflush")))
             {
-                printf("Error : Redeclaration of %s : Line %d\n", $2, printline());
+                print_error();
+                printf(" Redeclaration of %s : Line %d\n", $2, printline());
                 errc++;
             } else {
                 insert($2, FUNCTION);
@@ -361,8 +405,10 @@ assignment1 : ID { push($1); } '=' { strcpy(st1[++top], "="); } E { codegen_assi
         {
             int sct = returnscope($1, stack[index1 - 1]);
             int type = returntype($1, sct);
-            if ((!(strspn($5, "0123456789") == strlen($5))) && type == 258 && fl == 0)
-                printf("\nError : Type Mismatch : Line %d\n", printline());
+            if ((!(strspn($5, "0123456789") == strlen($5))) && type == 258 && fl == 0) {
+                print_error();
+                printf("Type Mismatch : Line %d\n", printline());
+            }
             if (!lookup($1))
             {
                 int currscope = stack[index1 - 1];
@@ -445,7 +491,8 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
         {
             if ( (!(strspn($6, "0123456789") == strlen($6))) && $1 == 258 && (fl == 0))
             {
-                printf("\nError : Type Mismatch : Line %d\n", printline());
+                print_error();
+                printf("Type Mismatch : Line %d\n", printline());
                 fl = 1;
             }
             if (!lookup($2))
@@ -453,7 +500,8 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
                 int currscope = stack[index1 - 1];
                 int previous_scope = returnscope($2, currscope);
                 if (currscope == previous_scope) {
-                    printf("\nError : Redeclaration of %s : Line %d\n", $2, printline());
+                    print_error();
+                    printf("Redeclaration of %s : Line %d\n", $2, printline());
                 } else {
                     insert_dup($2, $1, currscope);
                     check_scope_update($2, $6, stack[index1 - 1]);
@@ -475,11 +523,15 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
             {
                 int currscope = stack[index1 - 1];
                 int scope = returnscope($1,currscope);
-                if (!(scope <= currscope && end[scope] == 0) || scope == 0)
-                    printf("\nError : Variable %s out of scope : Line %d\n", $1, printline());
+                if (!(scope <= currscope && end[scope] == 0) || scope == 0) {
+                    print_error();
+                    printf("Variable %s out of scope : Line %d\n", $1, printline());
+                }
             }
-            else
-                printf("\nError : Undeclared Variable %s : Line %d\n", $1, printline());
+            else {
+                print_error();
+                printf("Undeclared Variable %s : Line %d\n", $1, printline());
+            }
         }
 /*
 	| Type ID '[' assignment ']' ';' {
@@ -497,12 +549,14 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
                 itype = 258;
 
 			if (itype!=258) {
-			    printf("\nError : Array index must be of type int : Line %d\n", printline());
+			    print_error();
+                printf("Array index must be of type int : Line %d\n", printline());
                 errc++;
             }
 
 			if (atoi($4)<=0) { 
-                printf("\nError : Array index must be of type int > 0 : Line %d\n", printline());
+                print_error();
+                printf("Array index must be of type int > 0 : Line %d\n", printline());
                 errc++;
             }
 
@@ -510,7 +564,8 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
 				int currscope = stack[top - 1];
 				int previous_scope = returnscope($2, currscope);
 				if (currscope == previous_scope) {
-                    printf("\nError : Redeclaration of %s : Line %d\n", $2, printline());
+                    print_error();
+                    printf("Redeclaration of %s : Line %d\n", $2, printline());
                     errc++;
                 } else {
 					insert_dup($2, ARRAY, currscope);
