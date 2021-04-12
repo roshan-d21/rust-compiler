@@ -99,42 +99,42 @@ void while3()
 	printf("\nL%d:\n",y);
 }
 
-void for1()
-{
-	label_num++;
-	label[++ltop] = label_num;
-	printf("\nL%d:\n", label_num);
-}
+// void for1()
+// {
+// 	label_num++;
+// 	label[++ltop] = label_num;
+// 	printf("\nL%d:\n", label_num);
+// }
 
-void for2()
-{
-	label_num++;
-	strcpy(temp, "t");
-	strcat(temp, temp_count);
-	printf("\n%s = not %s\n", temp,st1[top--]);
- 	printf("if %s goto L%d\n", temp, label_num);
-	temp_count[0]++;
-	label[++ltop] = label_num;
-	label_num++;
-	printf("goto L%d\n", label_num);
-	label[++ltop] = label_num;
-	label_num++;
-	printf("L%d:\n", label_num);
-	label[++ltop] = label_num;
-}
+// void for2()
+// {
+// 	label_num++;
+// 	strcpy(temp, "t");
+// 	strcat(temp, temp_count);
+// 	printf("\n%s = not %s\n", temp,st1[top--]);
+//  	printf("if %s goto L%d\n", temp, label_num);
+// 	temp_count[0]++;
+// 	label[++ltop] = label_num;
+// 	label_num++;
+// 	printf("goto L%d\n", label_num);
+// 	label[++ltop] = label_num;
+// 	label_num++;
+// 	printf("L%d:\n", label_num);
+// 	label[++ltop] = label_num;
+// }
 
-void for3()
-{
-	printf("\ngoto L%d\n", label[ltop-3]);
-	printf("L%d:\n", label[ltop-1]);
-}
+// void for3()
+// {
+// 	printf("\ngoto L%d\n", label[ltop-3]);
+// 	printf("L%d:\n", label[ltop-1]);
+// }
 
-void for4()
-{
-	printf("\ngoto L%d\n", label[ltop]);
-	printf("L%d:\n", label[ltop-2]);
-	ltop -= 4;
-}
+// void for4()
+// {
+// 	printf("\ngoto L%d\n", label[ltop]);
+// 	printf("L%d:\n", label[ltop-2]);
+// 	ltop -= 4;
+// }
 
 void forin()
 {
@@ -153,7 +153,7 @@ void forin()
 	strcpy(temp, "t");
 	strcat(temp, temp_count);
 	printf("%s = not %s\n", temp, st1[top]);
- 	printf("\nif %s goto L%d\n", temp, label_num);
+ 	printf("\nif %s goto L%d\n\n", temp, label_num);
 	temp_count[0]++;
 	label[++ltop] = label_num;
 }
@@ -208,7 +208,7 @@ void codegen_umin()
 
 void codegen_assign()
 {
-	printf("\n%s = %s\n", st1[top-2], st1[top]);
+	printf("%s = %s\n", st1[top-2], st1[top]);
 	top -= 2;
 }
 
@@ -218,9 +218,9 @@ void codegen_assign()
     int ival;
     char *str;
 }
-%token<ival> INT FLOAT VOID
+%token<ival> INT FLOAT FN
 %token<str> ID NUM REAL
-%token IMPORT FN FUNCTION RETURN STRING ARRAY PRINT IF ELSE LOOP WHILE FOR IN RANGE LE GE EQ AND OR
+%token IMPORT FUNCTION RETURN STRING ARRAY PRINT IF ELSE LOOP WHILE FOR IN RANGE LE GE EQ AND OR
 %left LE GE EQ NEQ AND OR '<' '>'
 %right '='
 %right UMINUS
@@ -297,8 +297,7 @@ parameter : Type ID {
 
 Type : INT
 	| FLOAT
-	| VOID
-    | FN
+	| FN
 	;
 
 CompoundStmt : '{' StmtList '}'
@@ -320,7 +319,7 @@ stmt : Declaration
             else
                 storereturn(ct, INT); ct++;
 		}
-	| RETURN ';' { storereturn(ct, VOID); ct++; }
+	| RETURN ';' { storereturn(ct, FN); ct++; }
 	| RETURN ID ';' {
             int sct = returnscope($2, stack[top - 1]);	//stack[top-1] - current scope
 		    int type = returntype($2, sct);
@@ -345,11 +344,9 @@ loop : LOOP { loop1(); } CompoundStmt { loop2(); }
 while : WHILE { while1(); }  E  { while2(); } CompoundStmt { while3(); }
 	;
 
-for	: FOR '(' E { for1(); } ';' E { for2(); }';' E { for3(); } ')' CompoundStmt { for4(); }
-	| FOR ID { push($2); } IN F RANGE F { forin(); } CompoundStmt { forinend(); }
+for : FOR ID { push($2); } IN F RANGE F { forin(); } CompoundStmt { forinend(); }
+    /* | FOR '(' E { for1(); } ';' E { for2(); }';' E { for3(); } ')' CompoundStmt { for4(); } */
     ;
-
-/* range_exp : ID  { push($1); }  IN   { strcpy(st1[++top], "<="); }  E  { codegen(); } */
 
 
 assignment : ID '=' consttype
