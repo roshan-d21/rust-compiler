@@ -61,6 +61,18 @@ void if3()
 	printf("\nL%d:\n", label[ltop--]);
 }
 
+void loop1()
+{
+    label_num++;
+    label[++ltop] = label_num;
+	printf("\nL%d:\n", label_num);
+}
+
+void loop2()
+{
+	printf("\ngoto L%d\n", label[ltop--]);
+}
+
 void while1()
 {
 	label_num++;
@@ -73,8 +85,8 @@ void while2()
 	label_num++;
 	strcpy(temp, "t");
 	strcat(temp, temp_count);
-	printf("\n%s = not %s\n", temp, st1[top--]);
- 	printf("if %s goto L%d\n", temp, label_num);
+	printf("%s = not %s\n", temp, st1[top--]);
+ 	printf("\nif %s goto L%d\n", temp, label_num);
 	temp_count[0]++;
 	label[++ltop] = label_num;
 }
@@ -83,7 +95,7 @@ void while3()
 {
 	int y = label[ltop--];
 	printf("\ngoto L%d\n", label[ltop--]);
-	printf("L%d:\n",y);
+	printf("\nL%d:\n",y);
 }
 
 void for1()
@@ -177,7 +189,7 @@ void codegen_assign()
 }
 %token<ival> INT FLOAT VOID
 %token<str> ID NUM REAL
-%token IMPORT FUNCTION RETURN STRING ARRAY PRINT IF ELSE WHILE FOR LE GE EQ AND OR
+%token IMPORT FN FUNCTION RETURN STRING ARRAY PRINT IF ELSE LOOP WHILE FOR LE GE EQ AND OR
 %left LE GE EQ NEQ AND OR '<' '>'
 %right '='
 %right UMINUS
@@ -255,6 +267,7 @@ parameter : Type ID {
 Type : INT
 	| FLOAT
 	| VOID
+    | FN
 	;
 
 CompoundStmt : '{' StmtList '}'
@@ -267,6 +280,7 @@ StmtList : StmtList stmt
 stmt : Declaration
 	| if
 	| ID '(' ')' ';'
+    | loop
 	| while
 	| for
 	| RETURN consttype ';' {
@@ -288,9 +302,6 @@ stmt : Declaration
 	| CompoundStmt
 	;
 
-for	: FOR '(' E { for1(); } ';' E { for2(); }';' E { for3(); } ')' CompoundStmt { for4(); }
-	;
-
 if  : IF '(' E ')' { if1(); } CompoundStmt { if2(); } else
 	;
 
@@ -298,7 +309,12 @@ else : ELSE CompoundStmt {if3();}
 	|
 	;
 
-while : WHILE { while1(); } '(' E ')' { while2(); } CompoundStmt { while3(); }
+loop : LOOP { loop1(); } CompoundStmt { loop2(); } 
+
+while : WHILE { while1(); }  E  { while2(); } CompoundStmt { while3(); }
+	;
+
+for	: FOR '(' E { for1(); } ';' E { for2(); }';' E { for3(); } ')' CompoundStmt { for4(); }
 	;
 
 assignment : ID '=' consttype

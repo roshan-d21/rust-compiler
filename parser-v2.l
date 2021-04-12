@@ -36,10 +36,12 @@ digit [0-9]
 int	              { yylval.ival = INT; return INT; }
 float	            { yylval.ival = FLOAT; return FLOAT; }
 void	            { yylval.ival = VOID; return VOID; }
+fn                { yylval.ival = FN; return FN; }
 
 if	              { return IF; }
 else	            { return ELSE; }
 while	            { return WHILE; }
+loop              { return LOOP; }
 for	              { return FOR; }
 
 return 	          { return RETURN; }
