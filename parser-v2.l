@@ -43,10 +43,12 @@ else	            { return ELSE; }
 while	            { return WHILE; }
 loop              { return LOOP; }
 for	              { return FOR; }
+in                { return IN; }
+".."              { return RANGE; }
 
 return 	          { return RETURN; }
 ^"use ".+	        { return IMPORT; }
-printf	          { return PRINT; }
+println!	          { return PRINT; }
 
 {alpha}({alpha}|{digit})*     { yylval.str=strdup(yytext); return ID; }
 {digit}+	                    { yylval.str=strdup(yytext); return NUM; }

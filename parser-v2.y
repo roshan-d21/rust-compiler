@@ -9,10 +9,11 @@ int stack[100],
     index1 = 0,
     end[100],
     arr[10],
-    ct, c, b, fl, top=0,
+    ct, c, b, fl, top=0, fortop = 0,
     label[20], label_num = 0, ltop = 0;
 
 char st1[100][10];
+char forvar[100][10];
 char temp_count[2] = "0";
 int plist[100], flist[100], k = -1, errc = 0, j = 0;
 char temp[2]= "t";
@@ -135,6 +136,36 @@ void for4()
 	ltop -= 4;
 }
 
+void forin()
+{
+    printf("\n%s = %s\n", st1[top - 2], st1[top - 1]);
+    strcpy(forvar[++fortop], st1[top - 2]);
+
+    label_num++;
+	label[++ltop] = label_num;
+	printf("\nL%d:\n", label_num);
+
+    printf("\nt%s = %s < %s\n", temp_count, st1[top - 2], st1[top]);
+	temp_count[0]++;
+    top -= 2;
+
+    label_num++;
+	strcpy(temp, "t");
+	strcat(temp, temp_count);
+	printf("%s = not %s\n", temp, st1[top]);
+ 	printf("\nif %s goto L%d\n", temp, label_num);
+	temp_count[0]++;
+	label[++ltop] = label_num;
+}
+
+void forinend()
+{
+    printf("\n%s = %s + 1\n", forvar[fortop], forvar[fortop--]);
+    int y = label[ltop--];
+	printf("\ngoto L%d\n", label[ltop--]);
+	printf("\nL%d:\n",y);
+}
+
 void push(char *a)
 {
 	strcpy(st1[++top], a);
@@ -189,7 +220,7 @@ void codegen_assign()
 }
 %token<ival> INT FLOAT VOID
 %token<str> ID NUM REAL
-%token IMPORT FN FUNCTION RETURN STRING ARRAY PRINT IF ELSE LOOP WHILE FOR LE GE EQ AND OR
+%token IMPORT FN FUNCTION RETURN STRING ARRAY PRINT IF ELSE LOOP WHILE FOR IN RANGE LE GE EQ AND OR
 %left LE GE EQ NEQ AND OR '<' '>'
 %right '='
 %right UMINUS
@@ -315,7 +346,11 @@ while : WHILE { while1(); }  E  { while2(); } CompoundStmt { while3(); }
 	;
 
 for	: FOR '(' E { for1(); } ';' E { for2(); }';' E { for3(); } ')' CompoundStmt { for4(); }
-	;
+	| FOR ID { push($2); } IN F RANGE F { forin(); } CompoundStmt { forinend(); }
+    ;
+
+/* range_exp : ID  { push($1); }  IN   { strcpy(st1[++top], "<="); }  E  { codegen(); } */
+
 
 assignment : ID '=' consttype
 	| ID '+' assignment
