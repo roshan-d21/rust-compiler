@@ -8,7 +8,7 @@ struct sym
 	int paratype[100];
 	int tn;
 	int pn;
-	float fvalue;
+	float value;
 	int index;
 	int scope;
 } st[100];
@@ -116,9 +116,9 @@ void check_scope_update(char *a, char *b, int sc)
 			for (k = 0; k < st[i].tn; k++)
 			{
 				if (st[i].type[k] == 258)
-					st[i].fvalue = (int)temp;
+					st[i].value = (int)temp;
 				else
-					st[i].fvalue = temp;
+					st[i].value = temp;
 			}
 		}
 	}
@@ -130,7 +130,7 @@ void storevalue(char *a, char *b, int s_c)
 	{
 		if (!strcmp(a, st[i].token) && s_c == st[i].scope)
 		{
-			st[i].fvalue = atof(b);
+			st[i].value = atof(b);
 		}
 	}
 }
@@ -237,14 +237,14 @@ void print()
 	for (i = 0; i < n; i++)
 	{
 		if (st[i].type[0] == 258)
-			printf("%d\t%s\t\t%d\t\t%d\t", st[i].sno, st[i].token, (int)st[i].fvalue, st[i].scope);
+			printf("%d\t%s\t\t%d\t\t%d\t", st[i].sno, st[i].token, (int)st[i].value, st[i].scope);
 		else
-			printf("%d\t%s\t\t%.1f\t\t%d\t", st[i].sno, st[i].token, st[i].fvalue, st[i].scope);
+			printf("%d\t%s\t\t%.1f\t\t%d\t", st[i].sno, st[i].token, st[i].value, st[i].scope);
 		printf("\t");
 		for (j = 0; j < st[i].tn; j++)
 		{
 			if (st[i].type[j] == 258)
-				printf("INT");
+				printf("VARIABLE");
 			else if (st[i].type[j] == 259)
 				printf("FLOAT");
 			else if (st[i].type[j] == 271)
@@ -252,9 +252,9 @@ void print()
 			else if (st[i].type[j] == 269)
 				printf("ARRAY");
 			else if (st[i].type[j] == 260)
-				printf("VOID");
-			if (st[i].tn > 1 && j < (st[i].tn - 1))
-				printf(" - ");
+				printf("FUNCTION");
+			// if (st[i].tn > 1 && j < (st[i].tn - 1))
+			// 	printf(" - ");
 		}
 		printf("\n");
 	}
