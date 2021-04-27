@@ -24,9 +24,15 @@ docker image build -t lex-yacc:latest .
 ```
 ```bash
 docker container run --name cdproject -it lex-yacc:latest
-````
+```
 
 ## Usage
+
+### For Phase 1 of the compiler (Lexical and Syntactical Analysis)
+
+```bash
+cd phase\ 1
+```
 
 Using `make`:
 
@@ -36,10 +42,39 @@ make parse
 Or compile each file individually:
 
 ```bash
-$ flex parser.l
-$ yacc parser.y
-$ gcc y.tab.c -lfl -w
-$ ./a.out test.rs
+flex parser.l
+yacc parser.y
+gcc y.tab.c -lfl -w
+./a.out test.rs
+```
+
+---
+
+### For Phase 2 of the compiler (ICG and Code Optimization)
+
+```bash
+cd phase\ 2
+```
+
+To Generate ICG:
+
+```bash
+make parse
+```
+
+Or compile each file individually:
+
+```bash
+flex parser-v2.l
+yacc parser-v2.y
+gcc y.tab.c -lfl -w
+./a.out test.rs
+```
+
+To optimize ICG code:
+
+```bash
+python3 code_optimizer.py icg.txt
 ```
 
 ## Team Members
