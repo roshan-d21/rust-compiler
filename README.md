@@ -2,22 +2,26 @@
 
 ## Introduction
 
-**Problem Statement:** Build a basic Rust compiler.
+**Problem Statement:** Build a basic Rust compiler using Lex and Yacc
 
 The compiler performs the following tasks:
   1. Lexical Analysis
   2. Symbol Table Generation
   3. Syntax Analysis
+  4. Semantic Analysis
+  5. Error Detection
+  6. Intermediate Code Generation
+  7. Code Optimization
 
 ## Installing Dependencies
 
-This project uses `lex` and `yacc`
+This project uses `lex` and `yacc`, and also requires `gcc` and `python3` to be installed
 
 ```bash
 sudo apt-get install -y flex byacc bison
 ```
 
-Or use the `Dockerfile` instead:
+Or use the `Dockerfile` instead to run the application in a container:
 
 ```bash
 docker image build -t lex-yacc:latest .
@@ -72,6 +76,12 @@ gcc y.tab.c -lfl -w
 ```
 
 To optimize ICG code:
+
+```bash
+make optimize
+```
+
+Or
 
 ```bash
 python3 code_optimizer.py icg.txt
