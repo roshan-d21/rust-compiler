@@ -376,7 +376,7 @@ stmt : Declaration
 	| CompoundStmt
 	;
 
-if  : IF '(' E ')' { if1(); } CompoundStmt { if2(); } else
+if  : IF E { if1(); } CompoundStmt { if2(); } else
 	;
 
 else : ELSE CompoundStmt {if3();}
@@ -421,11 +421,13 @@ assignment1 : ID { push($1); } '=' { strcpy(st1[++top], "="); } E { codegen_assi
         }
 	| ID ',' assignment1    {
             if (lookup($1))
+                print_error();
                 printf("\nUndeclared Variable %s : Line %d\n",$1,printline());
         }
 	| consttype ',' assignment1
 	| ID  {
             if (lookup($1))
+                print_error();
                 printf("\nUndeclared Variable %s : Line %d\n",$1,printline());
 		}
 //	| function_call
@@ -637,6 +639,7 @@ int main(int argc, char *argv[]) {
 }
 
 void yyerror(char *s) {
+    print_error();
 	printf("\nLine %d : %s %s\n", yylineno, s, yytext);
 }
 

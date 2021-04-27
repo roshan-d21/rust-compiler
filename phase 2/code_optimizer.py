@@ -210,15 +210,11 @@ def elimDeadCode(lines):
                         outflag = 1
                         break
                 else:
-
                     continue
 
-            if(outflag == 1):
-                
+            if(outflag == 1): 
                 newlines.append(lines[i])
-                    
-                    
-                
+  
         else:
             newlines.append(lines[i])
             continue

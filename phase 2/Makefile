@@ -1,6 +1,6 @@
 parse:
 	flex parser-v2.l
-	yacc parser-v2.y
+	yacc parser-v2.y --warnings=none
 	gcc y.tab.c -lfl -w
 	./a.out ../test.rs
 

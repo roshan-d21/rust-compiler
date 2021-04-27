@@ -102,7 +102,7 @@ char next;
                                 }
 
 [ \t\v\n\f]		{  }
-.			{ /* ignore bad characters */ }
+.			{ yyerror("Lexical Error"); /* bad characters */ }
 
 
 %%

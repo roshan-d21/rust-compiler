@@ -15,6 +15,19 @@ struct sym
 int n = 0, arr[10];
 float t[100];
 int iter = 0;
+
+void insert(char *name, int type);
+
+void insertscope(char *a, int s);
+
+int returnscope(char *a, int cs);
+
+void storevalue(char *a, char *b, int s_c);
+
+int lookup(char *a);
+
+int returntype(char *a, int sct);
+
 int returntype_func(int ct)
 {
 	return arr[ct - 1];
@@ -244,7 +257,7 @@ void print()
 		for (j = 0; j < st[i].tn; j++)
 		{
 			if (st[i].type[j] == 258)
-				printf("VARIABLE");
+				printf("INTEGER");
 			else if (st[i].type[j] == 259)
 				printf("FLOAT");
 			else if (st[i].type[j] == 271)
