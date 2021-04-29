@@ -447,13 +447,6 @@ Declaration : Type ID { push($2); } '=' { strcpy(st1[++top], "="); } E { codegen
                 printf("Undeclared Variable %s : Line %d\n", $1, printline());
             }
         }
-/*
-	| Type ID '[' assignment ']' ';' {
-						insert($2,ARRAY);
-						insert($2,$1);
-						g_addr+=4;
-					}
-*/
 	| Type ID '[' assignment ']' ';' {
 			int itype;
 
