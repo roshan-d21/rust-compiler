@@ -152,8 +152,7 @@ def loopMotion(lines):
     printl(lines)
     return lines, loopblock
     
-        
-    
+  
 def elimDeadCode(lines):
     flag = 0
     newlines = []
@@ -220,6 +219,7 @@ def elimDeadCode(lines):
             continue
     
     return newlines
+
 
 def constantFolding(lines, blocks):
     tempdict = dict()
@@ -415,7 +415,6 @@ def constantFolding(lines, blocks):
     return newlist, fullList
 
 
-
 def liveVarAnalysis(lines):
     k = 1
     livevariables = []
@@ -440,186 +439,12 @@ def liveVarAnalysis(lines):
     print("__________________________")
     print()
 
-def checkArray(token, lines, i):
-    if('[' in token):
-        newptr = "*"
-        sub = ""
-        trav = 0
-        while(token[trav]!='['):
-            newptr+=token[trav]
-            trav+=1
-        trav+=1
-        while(token[trav]!=']'):
-            sub+=token[trav]
-            trav+=1
-        print(newptr)
-        print(trav)
-        return [newptr, sub]
-    else:
-        return
-
-def additem(newlist, out):
-    array = out[0]
-    subscript = out[1]
-    newstr = array + " = " + array + " + " + subscript
-    newlist.append(newstr)
-    return newlist
-
-def modifyArray(lines):
-    newlist = []
-    for i in range(len(lines)):
-        lines[i] = lines[i].strip("\n")
-        if(len(lines[i].split()) == 3):
-            lhs = lines[i].split()[0]
-            rhs = lines[i].split()[2]
-            out1 = checkArray(lhs, lines, i)
-            out2 = checkArray(rhs, lines, i)
-            if(out1 != None and out2!=None):
-                newlist = additem(newlist, out1)
-                newlist = additem(newlist, out2)
-                array1 = out1[0]
-                array2 = out2[0]
-                newline = array1 + " = " + array2
-                print(newline)
-                newlist.append(newline)
-            elif(out1 != None):
-                array = out1[0]
-                newlist = additem(newlist, out1)
-                newline = array + " = " + rhs
-                print(newline)
-                newlist.append(newline)
-            elif(out2 != None):
-                array = out2[0]
-                newlist = additem(newlist, out2)
-                newline = lhs + " = " + array
-                print(newline)
-                newlist.append(newline)
-            elif(out1 == None and out2 == None):
-                newlist.append(lines[i])
-        elif(len(lines[i].split()) == 5):
-            lhs = lines[i].split()[0]
-            arg1 = lines[i].split()[2]
-            arg2 = lines[i].split()[4]
-            out1 = checkArray(lhs, lines, i)
-            out2 = checkArray(arg1, lines,i)
-            out3 = checkArray(arg2, lines, i)
-            if(out1 !=None and out2!=None and out3!=None):
-                newlist = additem(newlist, out1)
-                newlist = additem(newlist, out2)
-                newlist = additem(newlist, out3)
-                array1 = out1[0]
-                array2 = out2[0]
-                array3 = out3[0]
-                newline = array1 + " = " + array2 + " " + lines[i].split()[3] + " " + array3
-                newlist.append(newline)
-            elif(out1 != None and out2 != None):
-                newlist = additem(newlist, out1)
-                newlist = additem(newlist, out2)
-                array1 = out1[0]
-                array2 = out2[0]
-                newline = array1 + " = " + array2 + " " + lines[i].split()[3] + " " + arg2
-                newlist.append(newline)
-            elif(out2 != None and out3 != None):
-                newlist = additem(newlist, out2)
-                newlist = additem(newlist, out3)
-                array1 = out2[0]
-                array2 = out3[0]
-                newline = lhs + " = " + array1 + " " + lines[i].split()[3] + " " + array2
-                newlist.append(newline)
-            elif(out1 != None and out3 != None):
-                newlist = additem(newlist, out1)
-                newlist = additem(newlist, out3)
-                array1 = out1[0]
-                array2 = out3[0]
-                newline = array1 + " = " + arg1 + " " + lines[i].split()[3] + " " + array2
-                newlist.append(newline)
-            elif(out1 != None):
-                newlist = additem(newlist, out1)
-                array = out1[0]
-                newline = array + " = " + arg1 + " " + lines[i].split()[3] + " " + arg2
-                newlist.append(newline)
-            elif(out2 != None):
-                newlist = additem(newlist, out2)
-                array = out2[0]
-                newline = lhs + " = " + array + " " + lines[i].split()[3] + " " + arg2
-                newlist.append(newline)
-            elif(out3 != None):
-                newlist = additem(newlist, out3)
-                array = out3[0]
-                newline = lhs + " = " + arg1 + " " + lines[i].split()[3] + " " + array
-                print(newline)
-                newlist.append(newline)
-            else:
-                newlist.append(lines[i])
-        elif(len(lines[i].split())== 4):
-            label = lines[i].split()[3]
-            
-            if(lines[i].split()[0] == "ARR"):
-                newlist.append(lines[i])
-                continue
-            condition = lines[i].split()[1]
-            tempval = 0
-            conds = ["=", "!", ">", "<"]
-            lhs = ""
-            rhs = ""
-            condit = ""
-            while(tempval<len(condition) and condition[tempval] not in conds):
-                lhs+=condition[tempval]
-                tempval+=1
-            condit+=condition[tempval]
-            tempval+=1
-            if(tempval <len(condition) and condition[tempval] in conds):
-                condit+=condition[tempval]
-                tempval+=1
-            while(tempval < len(condition)):
-                rhs+=condition[tempval]
-                tempval+=1
-            if('[' in lhs and '[' in rhs):
-                out1 = checkArray(lhs, lines, i)
-                out2 = checkArray(rhs, lines,i)
-                newlist = additem(newlist, out1)
-                newlist = additem(newlist, out2)
-                newline = "if" + " " + out1[0]+condit+out2[0]+ " " + "goto" + " " + label
-                newlist.append(newline)
-                print(newline)
-            elif('[' in lhs):
-                out2 = checkArray(lhs, lines,i)
-                newlist = additem(newlist, out2)
-                newline = "if" + " " + out2[0]+condit+rhs+ " " + "goto" + " " + label
-                newlist.append(newline)
-                print(newline)
-            elif('[' in rhs):
-                out2 = checkArray(rhs, lines,i)
-                newlist = additem(newlist, out2)
-                newline = "if" + " " + lhs+condit+out2[0]+ " " + "goto" + " " + label
-                newlist.append(newline)
-                print(newline)
-            else:
-                newlist.append(lines[i])
-            
-        else:
-            newlist.append(lines[i])
-                
-    return newlist   
-                
-    
-
+           
 fin = open("icg.txt", "r")
 fout = open("optimized_icg.txt", "w")
 lines = fin.readlines()
-print()
-# print("______________________")
-# print()
-# print("Array modification")
-# lines = modifyArray(lines)
 
-
-# for i in lines:
-#     print(i)
-
-# print()
-# print("______________________")
-# print()
+print("______________________")
 print("Live Variable Analysis")
 print("______________________")
 liveVarAnalysis(lines)
@@ -629,7 +454,7 @@ liveVarAnalysis(lines)
 # lines, loopblock = loopMotion(lines)
 # print("_____________________")
 
-print()
+print("_____________________")
 print("Dead Code Elimination")
 print("_____________________")
 print()
@@ -644,7 +469,6 @@ for i in range(len(looplines)):
 constantList, fullList = constantFolding(lines, loop)
 print("\n")
 print("__________________________")
-print()
 print("Constant Folded Expression")
 print("__________________________")
 print()
@@ -652,6 +476,3 @@ print()
 printExpression(constantList, fout)
 fin.close()
 fout.close()
-#printl(constantList)
-
-

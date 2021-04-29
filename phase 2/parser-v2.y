@@ -132,43 +132,6 @@ void while3()
     print_reset();
 }
 
-// void for1()
-// {
-// 	label_num++;
-// 	label[++ltop] = label_num;
-// 	printf("\nL%d:\n", label_num);
-// }
-
-// void for2()
-// {
-// 	label_num++;
-// 	strcpy(temp, "t");
-// 	strcat(temp, temp_count);
-// 	printf("\n%s = not %s\n", temp,st1[top--]);
-//  	printf("if %s goto L%d\n", temp, label_num);
-// 	temp_count[0]++;
-// 	label[++ltop] = label_num;
-// 	label_num++;
-// 	printf("goto L%d\n", label_num);
-// 	label[++ltop] = label_num;
-// 	label_num++;
-// 	printf("L%d:\n", label_num);
-// 	label[++ltop] = label_num;
-// }
-
-// void for3()
-// {
-// 	printf("\ngoto L%d\n", label[ltop-3]);
-// 	printf("L%d:\n", label[ltop-1]);
-// }
-
-// void for4()
-// {
-// 	printf("\ngoto L%d\n", label[ltop]);
-// 	printf("L%d:\n", label[ltop-2]);
-// 	ltop -= 4;
-// }
-
 void forin()
 {
     printf("\n%s = %s\n", st1[top - 2], st1[top - 1]);
@@ -430,60 +393,9 @@ assignment1 : ID { push($1); } '=' { strcpy(st1[++top], "="); } E { codegen_assi
                 print_error();
                 printf("\nUndeclared Variable %s : Line %d\n",$1,printline());
 		}
-//	| function_call
 	| consttype
 	;
 
-/*
-function_call: ID '=' E '(' paralist ')'			//function call
-			{
-							int sct=returnscope($1,stack[top-1]);
-							int type=returntype($1,sct);
-							//printf("%s",$3);
-							int rtype;
-							rtype=returntypef($3); int ch=0;
-							//printf("%d",rtype);
-							if (rtype!=type)
-							{ printf("\nError : Type Mismatch : Line %d\n",printline()); errc++;}
-								if (!lookup($1))
-								{
-									for(j=0;j<=l;j++)
-									{ch = ch+checkp($3,flist[j],j);}
-									if (ch>0) { printf("\nError : Parameter Type Mistake or Function undeclared : Line %d\n",printline()); errc++;}
-									l=-1;
-								}
-			}
-			| ID '(' paralist ')'			//function call without assignment
-			{
-							int sct=returnscope($1,stack[top-1]);
-							int type=returntype($1,sct); int ch=0;
-							if (!lookup($1))
-							{
-								for(j=0;j<=l;j++)
-								{ch = ch+checkp($1,flist[j],j);}
-								if (ch>0) { printf("\nError : Parameter Type Mistake or Required Function undeclared : Line %d\n",printline()); errc++;}
-								l=-1;
-							}
-							else {printf("\nUndeclared Function %s : Line %d\n",$1,printline());errc++;}
-			}
-			;
-
-paralist : paralist ',' param
-				| param
-				;
-
-param : ID
-				{
-			                if (lookup($1))
-				        	{printf("\nUndeclared Variable %s : Line %d\n",$1,printline());errc++;}
-			                else
-			                {
-			                	int sct=returnscope($1,stack[top-1]);
-			                	flist[++l]=returntype($1,sct);
-			                }
-				}
-			;
-*/
 
 consttype : NUM
 	| REAL
